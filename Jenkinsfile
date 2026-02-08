@@ -3,33 +3,41 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code') {
-            steps {
-                echo 'Cloning fin-health-assess-project...'
-            }
-        }
-
-        stage('Frontend Stage') {
+        stage('Frontend Install') {
             steps {
                 dir('frontend') {
-                    echo 'Inside frontend folder'
-                    echo 'Simulating frontend build...'
+                    bat 'npm install'
                 }
             }
         }
 
-        stage('Backend Stage') {
+        stage('Frontend Build') {
+            steps {
+                dir('frontend') {
+                    bat 'npm run build'
+                }
+            }
+        }
+
+        stage('Backend Install Requirements') {
             steps {
                 dir('backend') {
-                    echo 'Inside backend folder'
-                    echo 'Simulating backend setup...'
+                    bat 'pip install -r requirements.txt'
                 }
             }
         }
 
-        stage('Project Summary') {
+        stage('Django Check') {
             steps {
-                echo 'Frontend + Backend pipeline executed successfully'
+                dir('backend') {
+                    bat 'python manage.py check'
+                }
+            }
+        }
+
+        stage('Pipeline Complete') {
+            steps {
+                echo 'Frontend + Django backend build successful'
             }
         }
     }
