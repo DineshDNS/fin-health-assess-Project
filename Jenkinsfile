@@ -19,10 +19,18 @@ pipeline {
             }
         }
 
-        stage('Backend Install Requirements') {
+        stage('Create Virtual Env') {
             steps {
                 dir('backend') {
-                    bat 'pip install -r requirements.txt'
+                    bat 'python -m venv venv'
+                }
+            }
+        }
+
+        stage('Install Backend Requirements') {
+            steps {
+                dir('backend') {
+                    bat 'venv\\Scripts\\pip install -r requirements.txt'
                 }
             }
         }
@@ -30,14 +38,14 @@ pipeline {
         stage('Django Check') {
             steps {
                 dir('backend') {
-                    bat 'python manage.py check'
+                    bat 'venv\\Scripts\\python manage.py check'
                 }
             }
         }
 
         stage('Pipeline Complete') {
             steps {
-                echo 'Frontend + Django backend build successful'
+                echo 'Frontend + Django (venv) build successful'
             }
         }
     }
